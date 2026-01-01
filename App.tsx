@@ -1,17 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
-import { AppTab, ConnectionStatus, Post, Conversation } from './types';
-import Header from './components/Header';
-import Navbar from './components/Navbar';
-import Feed from './components/Feed';
-import ChatList from './components/ChatList';
-import ChatRoom from './components/ChatRoom';
-import CreatePost from './components/CreatePost';
-import Notifications from './components/Notifications';
-import Profile from './components/Profile';
-import VoiceMesh from './components/VoiceMesh';
-import LaunchScreen from './components/LaunchScreen';
-import Onboarding from './components/Onboarding';
+import { AppTab, ConnectionStatus, Post, Conversation } from './types.ts';
+import Header from './components/Header.tsx';
+import Navbar from './components/Navbar.tsx';
+import Feed from './components/Feed.tsx';
+import ChatList from './components/ChatList.tsx';
+import ChatRoom from './components/ChatRoom.tsx';
+import CreatePost from './components/CreatePost.tsx';
+import Notifications from './components/Notifications.tsx';
+import Profile from './components/Profile.tsx';
+import VoiceMesh from './components/VoiceMesh.tsx';
+import LaunchScreen from './components/LaunchScreen.tsx';
+import Onboarding from './components/Onboarding.tsx';
 
 const MOCK_POSTS: Post[] = [
   {
@@ -58,12 +58,14 @@ export default function App() {
   const [conversations] = useState<Conversation[]>(MOCK_CONVERSATIONS);
 
   useEffect(() => {
-    // Check if user already launched the app previously
-    const hasLaunched = localStorage.getItem('allan_connect_launched');
-    if (hasLaunched && stage === AppStage.SPLASH) {
-        // We'll still show splash briefly for brand experience
-        const timer = setTimeout(() => setStage(AppStage.MAIN), 2500);
-        return () => clearTimeout(timer);
+    try {
+      const hasLaunched = localStorage.getItem('allan_connect_launched');
+      if (hasLaunched && stage === AppStage.SPLASH) {
+          const timer = setTimeout(() => setStage(AppStage.MAIN), 2500);
+          return () => clearTimeout(timer);
+      }
+    } catch (e) {
+      console.warn("Storage access restricted:", e);
     }
   }, []);
 
@@ -80,7 +82,11 @@ export default function App() {
   }, []);
 
   const handleLaunch = () => {
-    localStorage.setItem('allan_connect_launched', 'true');
+    try {
+      localStorage.setItem('allan_connect_launched', 'true');
+    } catch (e) {
+      console.warn("Storage write restricted:", e);
+    }
     setStage(AppStage.MAIN);
   };
 
@@ -89,7 +95,6 @@ export default function App() {
     setActiveTab(AppTab.FEED);
   };
 
-  // CRITICAL: Strict early returns for stages ensure no UI overlay/leaking
   if (stage === AppStage.SPLASH) {
     return <LaunchScreen onComplete={() => setStage(AppStage.ONBOARDING)} />;
   }

@@ -1,7 +1,16 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
-const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+const getApiKey = () => {
+  try {
+    // Rely on the provided execution context where process.env.API_KEY is pre-configured
+    return (typeof process !== 'undefined' && process.env) ? process.env.API_KEY : '';
+  } catch {
+    return '';
+  }
+};
+
+const getAI = () => new GoogleGenAI({ apiKey: getApiKey() || '' });
 
 export const generateSmartCaption = async (description: string): Promise<string> => {
   try {
@@ -26,6 +35,7 @@ export const summarizeNearbyActivity = async (posts: any[]): Promise<string> => 
     });
     return response.text || "Check out what's happening nearby!";
   } catch (error) {
+    console.error("Gemini Summarization Error:", error);
     return "Your local community is active! Scroll to see more.";
   }
 };
