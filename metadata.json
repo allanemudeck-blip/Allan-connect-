@@ -1,0 +1,8 @@
+{
+  "name": "Allan Connect",
+  "description": "A secure, legal offline communication and social media platform that allows users to connect, share, and view content even in areas with limited or no Internet access using device-to-device simulation.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
